@@ -1,0 +1,7 @@
+selenium
+requests
+scrapy
+bs4
+webdriver-manager
+python-dotenv
+pandas
