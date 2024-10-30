@@ -24,4 +24,4 @@
 2. **Change urls from Dien may xanh**:
     see the code from dienmayxanh.ipynb, change **urls variable** for what you want.
     run code
-    see the result (pls copy result to local and pls don't upload result to github, it could replace the file in repo)
+    upload crawled data into the data folder
