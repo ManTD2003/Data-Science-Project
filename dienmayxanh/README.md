@@ -1,7 +1,4 @@
-# Crawldata
-
-This repository contains code and resources for data crawling from different sources, focusing on automation and web scraping using tools like Selenium.
-
+# DIEN MAY XANH SCRAPER 
 ## Repository Structure
 
 - **diemayxanh.ipynb**: Jupyter notebook for scraping data from `diemayxanh.com`.
@@ -22,9 +19,9 @@ This repository contains code and resources for data crawling from different sou
 1. **Clone the repository**:
    ```bash
    git clone <repo-url>
-   cd crawldata
+   cd dienmayxanh
    ```
 2. **Change urls from Dien may xanh**:
-    see the code from dienmayxanh.ipynb, change urls variable for what you want.
+    see the code from dienmayxanh.ipynb, change **urls variable** for what you want.
     run code
     see the result (pls copy result to local and pls don't upload result to github, it could replace the file in repo)
