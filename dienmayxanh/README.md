@@ -11,17 +11,37 @@
 
 ### Prerequisites
 
-- Python 3.x
-- Recommended to use a virtual environment to manage dependencies
+- Python 3.x >= 3.9
+- Recommended to use a virtual environment to manage dependencies (conda or pip venv)
 
+1. **Conda**:
+   ```
+   conda create -n [your env name] python=3.10
+   conda activate [your env name]
+   ```
+2. **Py-env**:
+   ```
+   python -m venv [your env name]
+   ```
+   **follow command below to active environment**
+   | Platform | Shell       | Command to activate virtual environment      |
+   |----------|-------------|-------------------------------------------------|
+   | POSIX    | bash/zsh    | `$ source <venv>/bin/activate`                  |
+   |          | fish        | `$ source <venv>/bin/activate.fish`             |
+   |          | csh/tcsh    | `$ source <venv>/bin/activate.csh`              |
+   |          | pwsh        | `$ <venv>/bin/Activate.ps1`                     |
+   | Windows  | cmd.exe     | `C:\> <venv>\Scripts\activate.bat`              |
+   |          | PowerShell  | `PS C:\> <venv>\Scripts\Activate.ps1`           |
 ### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/ManTD2003/Data-Science-Project.git
    cd dienmayxanh
+   pip install -r requirements.txt
    ```
 2. **Change urls from Dien may xanh**:
-    see the code from dienmayxanh.ipynb, change **urls variable** for what you want.
-    run code
-    upload crawled data into the data folder
+    replace dienmayxanh categories link with urls variables then run
+    ```
+      python run.py
+    ```
