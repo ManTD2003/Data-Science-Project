@@ -1,0 +1,7 @@
+bertopic
+sentence-transformers
+hdbscan
+pandas
+pyvi
+stop-words
+nbformat
