@@ -28,7 +28,7 @@ def preprocess_text(docs: list[str]) -> list[str]:
         words = doc.split()
         
         # remove stopwords
-        # words = [word for word in words if word.lower() not in stop_words]
+        words = [word for word in words if word.lower() not in stop_words]
         
         preprocessed_doc = " ".join(words)
         preprocessed_docs.append(preprocessed_doc)
