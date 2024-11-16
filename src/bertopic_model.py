@@ -1,17 +1,15 @@
-from bertopic import BERTopic
+from bertopic import BERTopic  # Cập nhật import
 from sentence_transformers import SentenceTransformer
 from umap import UMAP
 from hdbscan import HDBSCAN
 from sklearn.feature_extraction.text import CountVectorizer
-from bertopic.representation import KeyBERTInspired
 from bertopic.vectorizers import ClassTfidfTransformer
 from underthesea import word_tokenize
 from stop_words import get_stop_words
-
+from bertopic.representation import MaximalMarginalRelevance
 
 def vietnamese_tokenizer(text):
     return word_tokenize(text)
-
 
 def fit_bertopic(
     docs: list[str],
@@ -32,7 +30,7 @@ def fit_bertopic(
         list[float]: Probabilities.
     """
 
-    embedding_model = SentenceTransformer(embedding_model_name, cache_folder=cache_dir)
+    embedding_model = SentenceTransformer(embedding_model_name, cache_folder=cache_dir, device='cuda')
 
     umap_model = UMAP(n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine')
 
@@ -44,12 +42,15 @@ def fit_bertopic(
     vectorizer_model = CountVectorizer(
         tokenizer=vietnamese_tokenizer,
         stop_words=vietnamese_stopwords,
-        ngram_range=(1, 2)
+        ngram_range=(1, 2),
+        token_pattern=None,
+        lowercase=False,
+        strip_accents=None
     )
 
     ctfidf_model = ClassTfidfTransformer()
 
-    representation_model = KeyBERTInspired()
+    representation_model = MaximalMarginalRelevance(diversity=0.7)
 
     topic_model = BERTopic(
         embedding_model=embedding_model,
@@ -63,7 +64,6 @@ def fit_bertopic(
     topics, probs = topic_model.fit_transform(docs)
 
     return topic_model, topics, probs
-
 
 def load_bert_model(model_path: str):
     """

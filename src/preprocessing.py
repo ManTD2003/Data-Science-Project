@@ -22,14 +22,11 @@ def preprocess_text(docs: list[str]) -> list[str]:
     preprocessed_docs = []
 
     for doc in docs:
-        doc = re.sub(r"[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơư -]", " ", doc)
         doc = re.sub(r"\s+", " ", doc).strip()
         doc = ViTokenizer.tokenize(doc)
         words = doc.split()
         
-        # remove stopwords
         words = [word for word in words if word.lower() not in stop_words]
-        
         preprocessed_doc = " ".join(words)
         preprocessed_docs.append(preprocessed_doc)
 
