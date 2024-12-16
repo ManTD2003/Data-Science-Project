@@ -2,7 +2,12 @@ from preprocessing import preprocess_text
 from bertopic_model import fit_bertopic
 from utils import load_raw_data_to_list_comment
 import argparse
-
+def int_or_str(value):
+    try:
+        return int(value)  # Try converting to int
+    except ValueError:
+        return str(value)
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fit BERTopic model")
     parser.add_argument("--datapath", type=str, help="Input data file path", required=True)
@@ -24,12 +29,22 @@ if __name__ == "__main__":
         help="Cache directory for embeddings (default: None)",
         default=None,
     )
+    parser.add_argument(
+        "--nr_topic",
+        type=int_or_str,
+        help="Number of topics (default: 10, or a string keyword like 'auto')",
+        default=10,
+    )
+    parser.add_argument(
+        "--nr_range",
+        type=tuple[int, int],
+        help="Range of n-grams (default: (1, 3))",
+        default=(1, 3),
+    )
     args = parser.parse_args()
 
     docs = load_raw_data_to_list_comment(args.datapath)
-
     cleaned_docs = preprocess_text(docs)
-
     cleaned_docs = [doc for doc in cleaned_docs if doc.strip() != '']
 
     if not cleaned_docs:
@@ -40,7 +55,8 @@ if __name__ == "__main__":
         cleaned_docs,
         embedding_model_name=args.embedding_model_name,
         cache_dir=args.cache_dir,
+        nr_topic=args.nr_topic,
+        nr_range=args.nr_range,
     )
 
-    # print("Identified Topics:", topics)
     topic_model.save(args.save_dir)

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BERTopic Visualizations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 cột */
+            gap: 20px; /* Khoảng cách giữa các phần tử */
+            padding: 20px;
+        }
+
+        .grid-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-item h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BERTopic Visualizations</h1>
+
+    <div class="grid-container">
+        <div class="grid-item">
+            <h2>Topic Visualization</h2>
+            {{ topics_html|safe }}
+        </div>
+        <div class="grid-item">
+            <h2>Barchart Visualization</h2>
+            {{ barchart_html|safe }}
+        </div>
+        <div class="grid-item">
+            <h2>Heatmap Visualization</h2>
+            {{ heatmap_html|safe }}
+        </div>
+        <div class="grid-item">
+            <h2>Hierarchy Visualization</h2>
+            {{ hierarchy_html|safe }}
+        </div>
+    </div>
+</body>
+</html>

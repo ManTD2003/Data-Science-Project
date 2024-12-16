@@ -5,3 +5,4 @@ pandas
 pyvi
 stop-words
 nbformat
+streamlit

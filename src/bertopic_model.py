@@ -15,6 +15,8 @@ def fit_bertopic(
     docs: list[str],
     embedding_model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     cache_dir: str | None = None,
+    nr_topic: str | int = 10,
+    nr_range: tuple[int, int] = (1, 3),
 ):
     """
     Fit BERTopic model on the given data and return the model, topics, and probabilities.
@@ -42,7 +44,7 @@ def fit_bertopic(
     vectorizer_model = CountVectorizer(
         tokenizer=vietnamese_tokenizer,
         stop_words=vietnamese_stopwords,
-        ngram_range=(1, 2),
+        ngram_range=nr_range,
         token_pattern=None,
         lowercase=False,
         strip_accents=None
@@ -58,7 +60,8 @@ def fit_bertopic(
         hdbscan_model=hdbscan_model,
         vectorizer_model=vectorizer_model,
         ctfidf_model=ctfidf_model,
-        representation_model=representation_model
+        representation_model=representation_model,
+        nr_topics=nr_topic
     )
 
     topics, probs = topic_model.fit_transform(docs)
