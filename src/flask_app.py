@@ -5,7 +5,7 @@ import plotly.io as pio
 app = Flask(__name__)
 
 # # Load BERTopic model
-topic_model = BERTopic.load("/home/duc-chung/work/20241/DataScience/Data-Science-Project/src/fitted_model") 
+topic_model = BERTopic.load("fitted_model") 
 
 
 @app.route("/")

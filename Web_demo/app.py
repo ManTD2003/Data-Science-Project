@@ -15,7 +15,7 @@ data_files = [
     {"name": "Giày dép nữ", "image": "giaydepnu.jpg", "redirect_url": "http://localhost:8000"},
     {"name": "Bách hóa", "image": "groceries.jpg", "redirect_url": "http://localhost:8000"},
     {"name": "Hàng Quốc tế", "image": "hangquocte.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Chăm sóc nhà cửa", "image": "homecaring.jpg", "redirect_url": "http://localhost:8000"},
+    {"name": "Chăm sóc nhà cửa", "image": "homecaring.jpg", "redirect_url": "http://127.0.0.1:5000"},
     {"name": "Điện thoại & Máy tính bảng", "image": "smartphone.jpg", "redirect_url": "http://localhost:8000"},
     {"name": "Sức khỏe & Làm đẹp", "image": "suckhoelamdep.jpg", "redirect_url": "http://localhost:8000"},
 ]
