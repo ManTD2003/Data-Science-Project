@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 
 data_files = [
-    {"name": "Balo và vali", "image": "balo.jpg", "redirect_url": "http://localhost:8000"},
+    {"name": "Balo và vali", "image": "balo.jpg", "redirect_url": "http://localhost:5001"},
     {"name": "Điện gia dụng", "image": "diengiadung.jpg", "redirect_url": "http://localhost:8000"},
     {"name": "Điện tử & Điện lạnh", "image": "dientudienlanh.jpg", "redirect_url": "http://localhost:8000"},
     {"name": "Đồ chơi Mẹ & Bé", "image": "dochoimebe.jpg", "redirect_url": "http://localhost:8000"},

@@ -148,6 +148,9 @@
             <li><button class="tab-button" data-target="hierarchy">
                 <i class="fas fa-project-diagram"></i>Hierarchy
             </button></li>
+            <li><button class="tab-button" data-target="evaluation-chart">
+                <i class="fas fa-star"></i>Evaluation
+            </button></li>
         </ul>
     </div>
 
@@ -179,6 +182,14 @@
                 <iframe class="chart-iframe" srcdoc="{{ hierarchy_html }}"></iframe>
             </div>
         </div>
+
+        <div id="evaluation-chart" class="chart-container">
+            <h2 class="chart-title">Evaluation Metrics</h2>
+            <div class="chart-wrapper">
+                <iframe class="chart-iframe" srcdoc="{{ evaluation_html }}"></iframe>
+            </div>
+        </div>
+        
     </div>
 
     <script>
