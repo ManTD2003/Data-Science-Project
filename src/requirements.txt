@@ -7,3 +7,5 @@ stop-words
 nbformat
 streamlit
 stop_words
+flask
+matplotlib
