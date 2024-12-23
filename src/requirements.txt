@@ -9,3 +9,4 @@ streamlit
 stop_words
 flask
 matplotlib
+underthesea
