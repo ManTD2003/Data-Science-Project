@@ -5,7 +5,7 @@ import plotly.io as pio
 app = Flask(__name__)
 
 # # Load BERTopic model
-topic_model = BERTopic.load("D://intro to data science//code//dataset//Data-Science-Project//src//thiet-bi-kts-phu-kien-so") 
+topic_model = BERTopic.load("/home/duc-chung/work/20241/demo/Data-Science-Project/src/fitted_model") 
 
 import matplotlib
 matplotlib.use('Agg')
@@ -82,7 +82,7 @@ def index():
     heatmap_html = pio.to_html(visualize_heatmap, full_html=False)
     hierarchy_html = pio.to_html(visualize_hierarchy, full_html=False)
 
-    json_file = "D://intro to data science//code//BERTopic_evaluation//evaluation//BERTopic_trump_0.json"
+    json_file = "/home/duc-chung/work/20241/demo/Data-Science-Project/src/phu-kien-thoi-trang.json"
     evaluation_html = generate_evaluation_charts(json_file)
 
     return render_template(
