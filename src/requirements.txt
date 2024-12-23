@@ -6,3 +6,4 @@ pyvi
 stop-words
 nbformat
 streamlit
+stop_words
