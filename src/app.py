@@ -1,249 +1,210 @@
-import webbrowser
-from flask import Flask, render_template_string
-import threading
 import os
+import webbrowser
+import threading
+import json
+from io import BytesIO
+import base64
+
+from flask import Flask, render_template, request
+from bertopic import BERTopic
+import plotly.io as pio
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
+# =========================
+# 1) TRANG DANH MỤC
+# =========================
+
 data_files = [
-    {"name": "Balo và vali", "image": "balo.jpg", "redirect_url": "http://localhost:5001"},
-    {"name": "Điện gia dụng", "image": "diengiadung.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Điện tử & Điện lạnh", "image": "dientudienlanh.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Đồ chơi Mẹ & Bé", "image": "dochoimebe.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Đồng hồ & Trang sức", "image": "donghotrangsuc.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Giày dép Nam", "image": "giaydepnam.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Giày dép nữ", "image": "giaydepnu.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Bách hóa", "image": "groceries.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Hàng Quốc tế", "image": "hangquocte.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Chăm sóc nhà cửa", "image": "homecaring.jpg", "redirect_url": "http://localhost:5001"},
-    {"name": "Điện thoại & Máy tính bảng", "image": "smartphone.jpg", "redirect_url": "http://localhost:8000"},
-    {"name": "Sức khỏe & Làm đẹp", "image": "suckhoelamdep.jpg", "redirect_url": "http://localhost:8000"},
+    {
+        "name": "Phụ kiện thời trang",
+        "image": "donghotrangsuc.jpg",
+        "redirect_url": "/analysis/phu-kien-thoi-trang"
+    },
+    {
+        "name": "Điện thoại máy tính bảng",
+        "image": "dochoimebe.jpg",
+        "redirect_url": "/analysis/dien-thoai-may-tinh-bang"
+    },
+    {
+        "name": "Laptop",
+        "image": "hangquocte.jpg",
+        "redirect_url": "/analysis/laptop-may-vi-tinh-linh-kien"
+    },
+    {
+        "name": "thiết bị kts",
+        "image": "dientudienlanh.jpg",
+        "redirect_url": "/analysis/thiet-bi-kts-phu-kien-so"
+    },
 ]
 
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --background-color: #f0f9ff;
-            --text-color: #1e293b;
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.5;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 2rem 1rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            box-shadow: var(--card-shadow);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 1rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 1rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-
-        .card-image {
-            position: relative;
-            padding-top: 75%;
-            overflow: hidden;
-        }
-
-        .card-image img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover .card-image img {
-            transform: scale(1.1);
-        }
-
-        .card-content {
-            padding: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .card-description {
-            color: #64748b;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            color: var(--primary-color);
-            font-weight: 500;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .card-link:hover {
-            color: var(--secondary-color);
-        }
-
-        .card-link i {
-            margin-left: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1rem;
-            }
-
-            .card-content {
-                padding: 1rem;
-            }
-        }
-
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <h1>SELECT DATA CATEGORIES</h1>
-        <p>Nhấn vào danh mục để chuyển tới biểu đồ phân tích tương ứng</p>
-    </header>
-
-    <div class="search-container">
-        <input type="text" class="search-box" placeholder="Tìm kiếm danh mục..." id="searchInput" oninput="filterCards()">
-    </div>
-
-    <div class="container">
-        <div class="grid">
-            {% for file in data_files %}
-            <div class="card" onclick="window.location.href='{{ file['redirect_url'] }}'" data-name="{{ file['name'].lower() }}">
-                <div class="card-image">
-                    <img src="/static/{{ file['image'] }}" alt="{{ file['name'] }}">
-                </div>
-                <div class="card-content">
-                    <h2 class="card-title">{{ file['name'] }}</h2>
-                    <p class="card-description">{{ file['description'] }}</p>
-                    <span class="card-link">
-                        Click to redirect <i class="fas fa-arrow-right"></i>
-                    </span>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <script>
-        function filterCards() {
-            const searchInput = document.getElementById('searchInput');
-            const filter = searchInput.value.toLowerCase();
-            const cards = document.getElementsByClassName('card');
-
-            for (let card of cards) {
-                const name = card.getAttribute('data-name');
-                if (name.includes(filter)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            }
-        }
-    </script>
-</body>
-</html>
-"""
 
 @app.route("/")
-def index():
-    return render_template_string(HTML_TEMPLATE, data_files=data_files)
+def index_landing():
+    """
+    Trang chủ: hiển thị danh mục. 
+    Mỗi mục link tới "/analysis/<model_name>" tuỳ cấu hình trong data_files.
+    """
+    return render_template("home.html", data_files=data_files)
 
+
+# =========================
+# 2) LOAD TẤT CẢ MODEL & BIỂU ĐỒ TRƯỚC (GLOBAL)
+# =========================
+models_cache = {}
+chart_data_cache = {}
+
+def load_all_models_and_charts(models_dir="models", eval_dir="eval"):
+    """
+    Duyệt folder models_dir, tìm các file mô hình (VD: model_a.pkl, model_b.pkl).
+    Tương ứng, tìm file JSON trong eval_dir (VD: model_a.json).
+    => Load model, tạo biểu đồ Plotly & matplotlib => Lưu cache.
+    """
+    if not os.path.isdir(models_dir):
+        print(f"[WARN] Thư mục models_dir={models_dir} không tồn tại!")
+        return
+
+    for filename in os.listdir(models_dir):
+        full_path = os.path.join(models_dir, filename)
+        if not os.path.isfile(full_path):
+            continue
+        
+        model_name, ext = os.path.splitext(filename)
+
+        print(f"[INFO] Đang load mô hình: {filename}")
+        model_obj = BERTopic.load(full_path)  
+        models_cache[model_name] = model_obj
+        print(f"[INFO] Model '{model_name}' đã load xong.")
+
+        json_path = os.path.join(eval_dir, model_name + ".json")
+        if not os.path.exists(json_path):
+            print(f"[WARN] Không tìm thấy file JSON: {json_path}")
+            chart_data_cache[model_name] = {
+                "topics_html": None,
+                "barchart_html": None,
+                "heatmap_html": None,
+                "hierarchy_html": None,
+                "evaluation_html": None
+            }
+            continue
+        
+        print(f"[INFO] Sinh biểu đồ cho '{model_name}'...")
+
+        visualize_topics    = model_obj.visualize_topics()
+        visualize_barchart  = model_obj.visualize_barchart(top_n_topics=10)
+        visualize_heatmap   = model_obj.visualize_heatmap()
+        visualize_hierarchy = model_obj.visualize_hierarchy()
+
+        topics_html    = pio.to_html(visualize_topics,    full_html=False)
+        barchart_html  = pio.to_html(visualize_barchart,  full_html=False)
+        heatmap_html   = pio.to_html(visualize_heatmap,   full_html=False)
+        hierarchy_html = pio.to_html(visualize_hierarchy, full_html=False)
+
+        evaluation_html = generate_evaluation_charts(json_path)
+
+        chart_data_cache[model_name] = {
+            "topics_html": topics_html,
+            "barchart_html": barchart_html,
+            "heatmap_html": heatmap_html,
+            "hierarchy_html": hierarchy_html,
+            "evaluation_html": evaluation_html
+        }
+        print(f"[INFO] Hoàn thành chart cho '{model_name}'.")
+
+def generate_evaluation_charts(json_file):
+    with open(json_file, 'r', encoding='utf-8') as f:
+        results = json.load(f)
+
+    nr_topics = [r['Params']['nr_topics'] for r in results]
+    npmi_scores = [r['Scores']['npmi'] for r in results]
+    diversity_scores = [r['Scores']['diversity'] for r in results]
+    computation_times = [r['Computation Time'] for r in results]
+
+    # Plot 1
+    fig1, ax1 = plt.subplots(figsize=(12,6))
+    ax1.plot(nr_topics, npmi_scores, marker='o', label='NPMI', color='blue')
+    ax1.plot(nr_topics, diversity_scores, marker='s', label='Diversity', color='green')
+    ax1.set_title('NPMI và Diversity vs Số lượng Topics')
+    ax1.set_xlabel('Số lượng Topics')
+    ax1.set_ylabel('Scores')
+    ax1.axhline(y=0, color='gray', linestyle='--', linewidth=0.7, label='Baseline=0')
+    ax1.legend()
+    ax1.grid(alpha=0.3)
+    plt.tight_layout()
+
+    img1 = BytesIO()
+    plt.savefig(img1, format='png')
+    img1.seek(0)
+    chart1_url = base64.b64encode(img1.getvalue()).decode()
+    plt.close(fig1)
+
+    # Plot 2
+    fig2, ax2 = plt.subplots(figsize=(8,5))
+    ax2.bar(nr_topics, computation_times, color='orange', alpha=0.7)
+    ax2.set_title('Thời gian tính toán vs Số lượng Topics')
+    ax2.set_xlabel('Số lượng Topics')
+    ax2.set_ylabel('Thời gian (s)')
+    ax2.grid(axis='y', alpha=0.3)
+    plt.tight_layout()
+
+    img2 = BytesIO()
+    plt.savefig(img2, format='png')
+    img2.seek(0)
+    chart2_url = base64.b64encode(img2.getvalue()).decode()
+    plt.close(fig2)
+
+    # Kết hợp HTML
+    return f"""
+    <div>
+      <h3>NPMI và Diversity vs Số lượng Topics</h3>
+      <img src="data:image/png;base64,{chart1_url}" />
+    </div>
+    <div>
+      <h3>Thời gian tính toán vs Số lượng Topics</h3>
+      <img src="data:image/png;base64,{chart2_url}" />
+    </div>
+    """
+
+
+# =========================
+# 3) ROUTE HIỂN THỊ BIỂU ĐỒ: /analysis/<model_name>
+# =========================
+
+@app.route("/analysis/<model_name>")
+def analysis(model_name):
+    """
+    Trang hiển thị biểu đồ (Plotly + matplotlib) cho model_name.
+    """
+    if model_name not in chart_data_cache:
+        return f"<h2>Không tìm thấy model: {model_name}</h2>", 404
+    
+    info = chart_data_cache[model_name]
+    return render_template(
+        "visualizations.html",
+        topics_html    = info["topics_html"],
+        barchart_html  = info["barchart_html"],
+        heatmap_html   = info["heatmap_html"],
+        hierarchy_html = info["hierarchy_html"],
+        evaluation_html= info["evaluation_html"]
+    )
+
+
+# =========================
+# 4) CHẠY APP
+# =========================
 def open_browser():
+    """Tuỳ chọn: tự mở trình duyệt sau khi Flask start."""
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         webbrowser.open_new("http://127.0.0.1:5000")
+        
+print("[INFO] Đang load tất cả mô hình + biểu đồ. Vui lòng chờ...")
+load_all_models_and_charts(models_dir="models", eval_dir="eval")
+print("[INFO] Đã load xong tất cả mô hình + biểu đồ.")
 
 if __name__ == "__main__":
     # threading.Timer(1, open_browser).start()
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
