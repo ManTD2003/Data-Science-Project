@@ -40,6 +40,18 @@ data_files = [
         "image": "dientudienlanh.jpg",
         "redirect_url": "/analysis/thiet-bi-kts-phu-kien-so"
     },
+    {"name": "Balo và vali", "image": "balo.jpg", "redirect_url": ""},
+    {"name": "Điện gia dụng", "image": "diengiadung.jpg", "redirect_url": ""},
+    {"name": "Điện tử & Điện lạnh", "image": "dientudienlanh.jpg", "redirect_url": ""},
+    {"name": "Đồ chơi Mẹ & Bé", "image": "dochoimebe.jpg", "redirect_url": ""},
+    {"name": "Đồng hồ & Trang sức", "image": "donghotrangsuc.jpg", "redirect_url": ""},
+    {"name": "Giày dép Nam", "image": "giaydepnam.jpg", "redirect_url": ""},
+    {"name": "Giày dép nữ", "image": "giaydepnu.jpg", "redirect_url": ""},
+    {"name": "Bách hóa", "image": "groceries.jpg", "redirect_url": ""},
+    {"name": "Hàng Quốc tế", "image": "hangquocte.jpg", "redirect_url": ""},
+    {"name": "Chăm sóc nhà cửa", "image": "homecaring.jpg", "redirect_url": ""},
+    {"name": "Điện thoại & Máy tính bảng", "image": "smartphone.jpg", "redirect_url": ""},
+    {"name": "Sức khỏe & Làm đẹp", "image": "suckhoelamdep.jpg", "redirect_url": ""},
 ]
 
 
