@@ -4,7 +4,7 @@ import threading
 import json
 from io import BytesIO
 import base64
-
+from sentence_transformers import SentenceTransformer
 from flask import Flask, render_template, request
 from bertopic import BERTopic
 import plotly.io as pio
@@ -76,7 +76,9 @@ def load_all_models_and_charts(models_dir="models", eval_dir="eval"):
         model_name, ext = os.path.splitext(filename)
 
         print(f"[INFO] Đang load mô hình: {filename}")
-        model_obj = BERTopic.load(full_path)  
+        model_obj = BERTopic.load(full_path)
+        cache_dir = 'cache'
+        model_obj.embedding_model =  SentenceTransformer('google-bert/bert-base-multilingual-cased', cache_folder=cache_dir, device='cpu')
         models_cache[model_name] = model_obj
         print(f"[INFO] Model '{model_name}' đã load xong.")
 
@@ -207,4 +209,4 @@ print("[INFO] Đã load xong tất cả mô hình + biểu đồ.")
 
 if __name__ == "__main__":
     # threading.Timer(1, open_browser).start()
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)

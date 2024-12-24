@@ -32,7 +32,7 @@ def fit_bertopic(
         list[float]: Probabilities.
     """
 
-    embedding_model = SentenceTransformer(embedding_model_name, cache_folder=cache_dir, device='cpu')
+    embedding_model = SentenceTransformer(embedding_model_name, cache_folder=cache_dir, device='cuda')
 
     umap_model = UMAP(n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine')
 
