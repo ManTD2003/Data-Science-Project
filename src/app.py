@@ -77,8 +77,8 @@ def load_all_models_and_charts(models_dir="models", eval_dir="eval"):
 
         print(f"[INFO] Đang load mô hình: {filename}")
         model_obj = BERTopic.load(full_path)
-        cache_dir = 'cache'
-        model_obj.embedding_model =  SentenceTransformer('google-bert/bert-base-multilingual-cased', cache_folder=cache_dir, device='cpu')
+        # cache_dir = 'cache'
+        # model_obj.embedding_model =  SentenceTransformer('google-bert/bert-base-multilingual-cased', cache_folder=cache_dir, device='cpu')
         models_cache[model_name] = model_obj
         print(f"[INFO] Model '{model_name}' đã load xong.")
 
